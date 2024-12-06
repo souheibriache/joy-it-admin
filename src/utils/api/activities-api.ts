@@ -8,8 +8,6 @@ import {
 } from "@/types/activity";
 import { serializeQuery } from "../methods";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 // Hook to fetch a single activity by ID
 export const useGetActivityById = (activityId: string) => {
   const getActivityByIdRequest = async () => {
