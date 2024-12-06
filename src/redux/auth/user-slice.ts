@@ -27,12 +27,11 @@ const userSlice = createSlice({
     fetchUserFailure(state, action: PayloadAction<any>) {
       state.loading = false;
       state.error = action.payload;
-      state.currentUser = null;
     },
     resetUser(state) {
+      state.currentUser = null;
       state.loading = false;
       state.error = false;
-      state.currentUser = null;
     },
   },
 });

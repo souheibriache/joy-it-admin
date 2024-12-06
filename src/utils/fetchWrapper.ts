@@ -2,13 +2,14 @@ import { resetAuth, signInSuccess } from "../redux/auth/auth-slice";
 import { store } from "../redux/store";
 import { resetUser } from "../redux/auth/user-slice";
 
-const baseUrl = import.meta.env.VITE_BACKEND_URL;
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-const fetchWithAuth = async (url: string, options: any = {}) => {
-  let { accessToken, refreshToken } = store.getState().auth;
-  const baseUrl = import.meta.env.VITE_BACKEND_URL;
+export const fetchWithAuth = async (
+  url: string,
+  options: any = { headers: {} }
+) => {
+  const { accessToken, refreshToken } = store.getState().auth;
   const dispatch = store.dispatch;
-
   const headers: any = {
     ...options.headers,
     Authorization: `Bearer ${accessToken}`,
@@ -16,49 +17,41 @@ const fetchWithAuth = async (url: string, options: any = {}) => {
 
   if (!(options.body instanceof FormData)) {
     headers["Content-Type"] =
-      options.headers["Content-Type"] || "application/json";
+      options && options?.headers
+        ? options?.headers["Content-Type"]
+        : "application/json";
   }
 
-  const fetchOptions = {
-    ...options,
-    headers,
-  };
+  let fetchOptions = { ...options, headers };
 
   let response = await fetch(baseUrl + url, fetchOptions);
 
   if (response.status === 401) {
-    return await refreshAccessToken(refreshToken || "")
-      .then(async (refreshResponse) => {
-        console.log({ refreshResponse });
-        // const accessTokenPayload: {} = jwtDecode(refreshResponse.accessToken);
-        dispatch(
-          signInSuccess({
-            refreshToken: refreshResponse.refreshToken || refreshToken,
-            accessToken: refreshResponse.accessToken,
-          })
-        );
+    try {
+      const refreshResponse = await refreshAccessToken(refreshToken || "");
+      dispatch(
+        signInSuccess({
+          accessToken: refreshResponse.accessToken,
+          refreshToken: refreshResponse.refreshToken || refreshToken,
+        })
+      );
 
-        fetchOptions.headers.Authorization = `Bearer ${refreshResponse.accessToken}`;
-        return await fetch(baseUrl + url, fetchOptions);
-      })
-      .catch(() => {
-        dispatch(resetAuth());
-        dispatch(resetUser());
-        window.location.href = "/sign-in";
-        return;
-      });
+      fetchOptions.headers.Authorization = `Bearer ${refreshResponse.accessToken}`;
+      response = await fetch(baseUrl + url, fetchOptions);
+    } catch (error) {
+      dispatch(resetAuth());
+      dispatch(resetUser());
+      window.location.href = "/sign-in";
+      throw new Error("Session expirée. Veuillez vous reconnecter.");
+    }
   }
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    console.error(`Request failed: ${response.status}`, errorData);
-    throw new Error(
-      errorData.message || `Request failed with status ${response.status}`
-    );
+    throw new Error(errorData.message || `Erreur ${response.status}`);
   }
 
-  const responseData = await response.json().catch(() => ({}));
-  return responseData;
+  return response.json();
 };
 
 export const refreshAccessToken = async (refreshToken: string) => {

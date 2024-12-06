@@ -7,16 +7,30 @@ import { BrowserRouter } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "./components/ui/sonner";
 import { persistor, store } from "./redux/store.ts";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ThemeProvider } from "next-themes";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
-    <PersistGate persistor={persistor} loading={null}>
-      <React.StrictMode>
-        <BrowserRouter>
-          <App />
-          <Toaster visibleToasts={1} position="top-right" richColors />
-        </BrowserRouter>
-      </React.StrictMode>
-    </PersistGate>
+    <ThemeProvider attribute="class" defaultTheme="system">
+      <PersistGate persistor={persistor} loading={null}>
+        <React.StrictMode>
+          <BrowserRouter>
+            <QueryClientProvider client={queryClient}>
+              <App />
+              <Toaster visibleToasts={5} position="top-right" richColors />
+            </QueryClientProvider>
+          </BrowserRouter>
+        </React.StrictMode>
+      </PersistGate>
+    </ThemeProvider>
   </Provider>
 );
