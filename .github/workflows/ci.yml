@@ -25,7 +25,6 @@ jobs:
 
       - name: Update .env File
         run: |
-          touch .env
           echo "${{ secrets.DEV_ENV }}" > .env
 
       - run: npm run build
