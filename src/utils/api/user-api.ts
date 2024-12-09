@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import { signInSuccess } from "@/redux/auth/auth-slice";
 import { toast } from "sonner";
 import fetchWithAuth from "../fetchWrapper";

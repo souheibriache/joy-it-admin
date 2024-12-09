@@ -7,8 +7,9 @@ export interface IPlan {
   price: number;
   benifits: string[];
   activities: string[];
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
 }
 
 // CreatePlanDto

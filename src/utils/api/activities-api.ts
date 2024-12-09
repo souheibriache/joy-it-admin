@@ -144,3 +144,56 @@ export const useDeleteActivity = () => {
     },
   });
 };
+
+export const useUpdateActivityImages = () => {
+  const queryClient = useQueryClient();
+
+  const updateActivityImagesRequest = async ({
+    activityId,
+    data,
+  }: {
+    activityId: string;
+    data: FormData;
+  }) => {
+    return await fetchWithAuth(`/activities/${activityId}/images`, {
+      method: "PUT",
+      body: data,
+    });
+  };
+
+  return useMutation(updateActivityImagesRequest, {
+    onSuccess: (_data, variables) => {
+      toast.success("Images mises à jour avec succès");
+      queryClient.invalidateQueries(["activity", variables.activityId]);
+    },
+    onError: () => {
+      toast.error("Échec de la mise à jour des images");
+    },
+  });
+};
+
+export const useDeleteActivityImage = () => {
+  const queryClient = useQueryClient();
+
+  const deleteActivityImage = async ({
+    activityId,
+    imageId,
+  }: {
+    activityId: string;
+    imageId: string;
+  }) => {
+    return await fetchWithAuth(`/activities/${activityId}/${imageId}`, {
+      method: "DELETE",
+    });
+  };
+
+  return useMutation(deleteActivityImage, {
+    onSuccess: () => {
+      toast.success("Image supprimée avec succès");
+      queryClient.invalidateQueries("activity");
+    },
+    onError: () => {
+      toast.error("Échec de la suppression de l'image");
+    },
+  });
+};

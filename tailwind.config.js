@@ -14,6 +14,7 @@ export default {
   		},
   		colors: {
 			purple: "#684087",
+			secondarypurple: "#9163b5",
 			joyitbg: "#F5F5F5",
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

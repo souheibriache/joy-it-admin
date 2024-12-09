@@ -10,17 +10,17 @@ export enum ScheduleStatusEnum {
 export interface ISchedule {
   id: string;
   activityId: string;
-  date: string; // ISO string format for Date
-  participants?: number; // Optional number of participants
-  status: ScheduleStatusEnum; // Status of the schedule
-  createdAt: string; // ISO string format for creation timestamp
-  updatedAt: string; // ISO string format for last update timestamp
+  date: string;
+  participants?: number;
+  status: ScheduleStatusEnum;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateScheduleDto {
-  activityId: string; // UUID of the associated activity
-  date: string; // ISO string format for Date
-  participants?: number; // Optional number of participants
+  activityId: string;
+  date: string;
+  participants?: number;
 }
 
 export type UpdateScheduleDto = Partial<CreateScheduleDto>;
