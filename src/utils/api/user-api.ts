@@ -42,17 +42,23 @@ export const useLoginUser = () => {
   } = useMutation({
     mutationFn: loginUser,
     onSuccess: async (data) => {
-      dispatch(
-        signInSuccess({
-          accessToken: data.access_token,
-          refreshToken: data.refresh_token,
-        })
-      );
-      toast.success("Connecté");
+      if (data.access_token && data.refresh_token) {
+        dispatch(
+          signInSuccess({
+            accessToken: data.access_token,
+            refreshToken: data.refresh_token,
+          })
+        );
+        toast.success("Connecté");
 
-      await dispatch(fetchCurrentUser()); // Ensure user is fetched before redirecting
+        await dispatch(fetchCurrentUser());
 
-      navigate("/home"); // Redirect to homepage
+        navigate("/home");
+        return;
+      }
+
+      toast.error("Identifiants invalides. Veuillez réessayer.");
+      reset();
     },
   });
 
