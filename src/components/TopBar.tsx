@@ -11,7 +11,7 @@ const TopBar = ({}: Props) => {
       <img src={HeaderLogo} className="h-1/2" />
       <div className="flex flex-row items-center gap-2 text- text-xl cursor-pointer">
         <p className="text-gray-800">
-          Hello <span className="font-semibold">{currentUser?.userName}</span>
+          Bonjour <span className="font-semibold">{currentUser?.userName}</span>
         </p>
 
         <UserCircle />

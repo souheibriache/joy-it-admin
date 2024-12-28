@@ -7,6 +7,7 @@ import {
   Activity,
   CreditCard,
   Building2,
+  Loader2,
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -20,7 +21,7 @@ const Dashboard = () => {
     return (
       <div>
         <PageTitle title="Tableau de bord" />
-        <p>Loading analytics...</p>
+        <Loader2 className="text-purple animate-spin" />
       </div>
     );
   }

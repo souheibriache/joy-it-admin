@@ -41,10 +41,10 @@ const ClientDetails: React.FC = () => {
         credit,
         client,
         subscription,
-        isVerified,
         logo,
         ...rest
       } = formData as any;
+
       updateCompany({ companyId, data: rest });
     }
   };
