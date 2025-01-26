@@ -145,6 +145,7 @@ const Plans: React.FC = () => {
           prev ? { ...prev, activities: [...prev.activities, activity] } : prev
         );
       }
+      setActivitySearchQuery("");
     }
   };
 
@@ -474,6 +475,24 @@ const Plans: React.FC = () => {
             </div>
 
             <label className="block text-sm font-medium">Activities</label>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {newPlan.activities.map((activity: any, idx) => (
+                <div
+                  key={idx}
+                  className="relative px-4 py-2 bg-gray-200 rounded-lg shadow hover:bg-gray-300 group"
+                >
+                  <span>{activity.name}</span>
+                  {
+                    <Button
+                      className="absolute -top-1 -right-1 p-1 h-6 w-6 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100"
+                      onClick={() => handleRemoveActivity(newPlan, activity.id)}
+                    >
+                      <Trash className="p-0.5" />
+                    </Button>
+                  }
+                </div>
+              ))}
+            </div>
             <div className="flex flex-col gap-2 mt-2">
               <input
                 type="text"

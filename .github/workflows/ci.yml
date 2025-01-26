@@ -27,4 +27,15 @@ jobs:
         run: |
           echo "${{ secrets.DEV_ENV }}" > .env
 
-      - run: npm run build
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_REPOSITORY }}:latest .
+          docker push ${{ secrets.DOCKERHUB_REPOSITORY }}:latest
+      - name: Apply changes
+        run: kubectl rollout restart deploy joy-it-admin -n joy-it
