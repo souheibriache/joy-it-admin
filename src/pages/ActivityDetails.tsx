@@ -12,8 +12,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { ActivityType } from "@/types/activity";
 import { ArrowLeft, Send, Trash } from "lucide-react";
+import { Switch } from "@headlessui/react";
 
-const placeholderImageUrl = "https://via.placeholder.com/600x400?text=No+Image";
+const placeholderImageUrl =
+  "https://res.cloudinary.com/dd0w9jo3q/image/upload/v1737834372/istockphoto-1147544807-612x612_arnkqz.jpg";
 
 const ActivityDetails: React.FC = () => {
   const { activityId } = useParams<{ activityId: string }>();
@@ -38,14 +40,17 @@ const ActivityDetails: React.FC = () => {
     description: "",
     address: "",
     city: "",
-    creditCost: 0,
     postalCode: "",
-    duration: 0,
     locationUrl: "",
+    duration: 0,
+    participants: 0,
+    isInsideCompany: false,
+    creditCost: 0,
     types: [],
-    images: [],
     keyWords: [],
+    images: [],
   });
+
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [mainImageIndex, setMainImageIndex] = useState<number | null>(null);
   const [keyWordInput, setKeyWordInput] = useState<string>("");
@@ -133,6 +138,16 @@ const ActivityDetails: React.FC = () => {
     setMainImageIndex(index);
   };
 
+  const handleToggleInsideCompany = (value: boolean) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      isInsideCompany: value,
+      address: value ? null : prev.address,
+      city: value ? null : prev.city,
+      postalCode: value ? null : prev.postalCode,
+    }));
+  };
+
   const handleSave = (e: any) => {
     e.preventDefault();
     const uploadFormData: any = new FormData();
@@ -140,16 +155,18 @@ const ActivityDetails: React.FC = () => {
     // Add form fields
     uploadFormData.append("name", formData.name);
     uploadFormData.append("description", formData.description);
-    uploadFormData.append("address", formData.address);
-    uploadFormData.append("city", formData.city);
+    uploadFormData.append("address", formData.address || "");
+    uploadFormData.append("city", formData.city || "");
     uploadFormData.append("postalCode", formData.postalCode || "");
     uploadFormData.append("locationUrl", formData.locationUrl || "");
     uploadFormData.append("duration", formData.duration || "0");
+    uploadFormData.append("participants", formData.participants || "0");
+    uploadFormData.append("isInsideCompany", formData.isInsideCompany);
     uploadFormData.append("creditCost", formData.creditCost.toString());
 
     // Add types as array values
     formData.types.forEach((type: string) => {
-      uploadFormData.append("types", type);
+      uploadFormData.append("types[]", type);
     });
 
     formData.keyWords.forEach((word: string, index: number) => {
@@ -173,9 +190,6 @@ const ActivityDetails: React.FC = () => {
         onSuccess: (data: any) => {
           const newActivityId = data.id;
           navigate(`/activities/${newActivityId}`);
-        },
-        onError: () => {
-          alert("Failed to create activity");
         },
       });
     } else {
@@ -271,64 +285,102 @@ const ActivityDetails: React.FC = () => {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Adresse
-              </label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address || ""}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Ville
-              </label>
-              <input
-                type="text"
-                name="city"
-                value={formData.city || ""}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Code postal
-              </label>
-              <input
-                type="text"
-                name="postalCode"
-                value={formData.postalCode || ""}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Localisation
-              </label>
-              <div className="flex flex-row items-center gap-2">
-                <input
-                  type="text"
-                  name="locationUrl"
-                  value={formData.locationUrl || ""}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={formData.isInsideCompany}
+                onChange={handleToggleInsideCompany}
+                className={`${
+                  formData.isInsideCompany ? "bg-purple" : "bg-gray-200"
+                } relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
+              >
+                <span
+                  className={`${
+                    formData.isInsideCompany ? "translate-x-6" : "translate-x-1"
+                  } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
                 />
-                <a
-                  href={formData.locationUrl || "https://www.google.fr/maps"}
-                  target="_blank"
-                >
-                  <Send className="text-blue-500" />
-                </a>
-              </div>
+              </Switch>
+              <label className="block text-sm font-medium text-gray-700">
+                Activité en interne
+              </label>
+            </div>
+
+            {!formData.isInsideCompany && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Adresse
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={formData.address || ""}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Ville
+                  </label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city || ""}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Code postal
+                  </label>
+                  <input
+                    type="text"
+                    name="postalCode"
+                    value={formData.postalCode || ""}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Localisation
+                  </label>
+                  <div className="flex flex-row items-center gap-2">
+                    <input
+                      type="text"
+                      name="locationUrl"
+                      value={formData.locationUrl || ""}
+                      onChange={handleInputChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <a
+                      href={
+                        formData.locationUrl || "https://www.google.fr/maps"
+                      }
+                      target="_blank"
+                    >
+                      <Send className="text-blue-500" />
+                    </a>
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Nombre de participants
+              </label>
+              <input
+                type="number"
+                name="participants"
+                value={formData.participants || ""}
+                onChange={handleInputChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+              />
             </div>
 
             <div>
@@ -346,7 +398,7 @@ const ActivityDetails: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Durée
+                Durée (Heurs)
               </label>
               <input
                 type="number"
