@@ -2,7 +2,7 @@ import { resetAuth, signInSuccess } from "../redux/auth/auth-slice";
 import { store } from "../redux/store";
 import { resetUser } from "../redux/auth/user-slice";
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
+const baseUrl = "https://api.joy-it.fr/api/v1";
 
 export const fetchWithAuth = async (
   url: string,

@@ -11,7 +11,7 @@ import {
 import { AppDispatch } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = "https://api.joy-it.fr/api/v1";
 
 export type LoginUserRequest = {
   login: string;
