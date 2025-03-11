@@ -3,9 +3,7 @@ import { OrderOptionsDto, PageDto } from "./order";
 export enum ActivityType {
   BIEN_ETRE = "BIEN_ETRE",
   TEAM_BUILDING = "TEAM_BUILDING",
-  SPORT = "SPORT",
   NOURRITURE = "NOURRITURE",
-  AUTRE = "AUTRE",
 }
 
 export type CreateActivityDto = {
@@ -21,6 +19,11 @@ export type CreateActivityDto = {
   isAvailable?: boolean; // Optional
   categories: ActivityType[];
   keyWords: string[];
+  id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
+  images?: any;
 };
 
 export type UpdateActivityDto = Partial<CreateActivityDto>;

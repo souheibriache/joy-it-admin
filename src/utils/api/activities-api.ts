@@ -54,6 +54,7 @@ export const useCreateActivity = () => {
   const queryClient = useQueryClient();
 
   const createActivityRequest = async (data: FormData) => {
+    console.log({ data });
     return await fetchWithAuth(`/activities`, { method: "POST", body: data });
   };
 
@@ -79,9 +80,18 @@ export const useUpdateActivity = () => {
     activityId: string;
     data: UpdateActivityDto;
   }) => {
+    const {
+      id,
+      createdAt,
+      updatedAt,
+      deletedAt,
+      mainImageIndex,
+      images,
+      ...updateData
+    } = data;
     return await fetchWithAuth(`/activities/${activityId}`, {
       method: "PUT",
-      body: JSON.stringify(data),
+      body: JSON.stringify(updateData),
     });
   };
 

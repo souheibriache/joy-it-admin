@@ -13,6 +13,13 @@ import { Button } from "@/components/ui/button";
 import { ActivityType } from "@/types/activity";
 import { ArrowLeft, Send, Trash } from "lucide-react";
 import { Switch } from "@headlessui/react";
+import { Select } from "@radix-ui/react-select";
+import {
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const placeholderImageUrl =
   "https://res.cloudinary.com/dd0w9jo3q/image/upload/v1737834372/istockphoto-1147544807-612x612_arnkqz.jpg";
@@ -46,7 +53,7 @@ const ActivityDetails: React.FC = () => {
     participants: 0,
     isInsideCompany: false,
     creditCost: 0,
-    types: [],
+    type: [],
     keyWords: [],
     images: [],
   });
@@ -88,15 +95,6 @@ const ActivityDetails: React.FC = () => {
       ...prev,
       keyWords: (prev.keyWords || []).filter((kw: string) => kw !== keyWord),
     }));
-  };
-
-  const handleCheckboxChange = (type: ActivityType) => {
-    setFormData((prev: any) => {
-      const updatedTypes = prev.types.includes(type)
-        ? prev.types.filter((t: ActivityType) => t !== type)
-        : [...prev.types, type];
-      return { ...prev, types: updatedTypes };
-    });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,19 +160,18 @@ const ActivityDetails: React.FC = () => {
     uploadFormData.append("duration", formData.duration || "0");
     uploadFormData.append("participants", formData.participants || "0");
     uploadFormData.append("isInsideCompany", formData.isInsideCompany);
-    uploadFormData.append("creditCost", formData.creditCost.toString());
+    uploadFormData.append("type", formData.type);
 
-    // Add types as array values
-    formData.types.forEach((type: string) => {
-      uploadFormData.append("types[]", type);
-    });
+    for (let [key, value] of uploadFormData.entries()) {
+      console.log(key, value);
+    }
 
-    formData.keyWords.forEach((word: string, index: number) => {
+    formData.keyWords?.forEach((word: string, index: number) => {
       uploadFormData.append(`keyWords[${index}]`, word);
     });
 
     // Add images
-    selectedFiles.forEach((file) => uploadFormData.append("images", file));
+    selectedFiles?.forEach((file) => uploadFormData.append("images", file));
 
     // Add main image index
     const mainImageIdx = (formData.images || []).findIndex(
@@ -193,7 +190,7 @@ const ActivityDetails: React.FC = () => {
         },
       });
     } else {
-      updateActivity({ activityId: activityId!, data: uploadFormData });
+      updateActivity({ activityId: activityId!, data: formData });
     }
   };
 
@@ -385,19 +382,6 @@ const ActivityDetails: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Coût de crédit
-              </label>
-              <input
-                type="number"
-                name="creditCost"
-                value={formData.creditCost || ""}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
                 Durée (Heurs)
               </label>
               <input
@@ -413,19 +397,25 @@ const ActivityDetails: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700">
                 Types d'activité
               </label>
-              <div className="flex flex-wrap gap-4 mt-2">
-                {Object.values(ActivityType).map((type) => (
-                  <label key={type} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={formData.types?.includes(type) || false}
-                      onChange={() => handleCheckboxChange(type)}
-                      className="mr-2 accent-purple"
-                    />
-                    {type}
-                  </label>
-                ))}
-              </div>
+
+              <Select
+                value={formData.type}
+                onValueChange={(e: string) => {
+                  setFormData((formData: any) => ({ ...formData, type: e }));
+                  console.log({ e, formData });
+                }}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Catégorie" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.values(ActivityType).map((activityType) => (
+                    <SelectItem value={activityType}>
+                      {activityType.replace("_", " ")}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <label>Mots-clés</label>

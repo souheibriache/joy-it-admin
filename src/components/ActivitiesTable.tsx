@@ -45,10 +45,6 @@ const ActivitiesTable: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    console.log({ activities });
-  }, [activities]);
-
   const columns: ColumnDef<any>[] = [
     {
       accessorKey: "name",
