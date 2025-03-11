@@ -2,8 +2,8 @@ import { resetAuth, signInSuccess } from "../redux/auth/auth-slice";
 import { store } from "../redux/store";
 import { resetUser } from "../redux/auth/user-slice";
 
-// const baseUrl = "https://api.joy-it.fr/api/v1";
-const baseUrl = "http://localhost:3000/api/v1";
+const baseUrl = "https://api.joy-it.fr/api/v1";
+// const baseUrl = "http://localhost:3000/api/v1";
 
 export const fetchWithAuth = async (
   url: string,
