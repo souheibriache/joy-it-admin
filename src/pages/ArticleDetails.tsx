@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   useGetArticle,
   useUpdateArticle,
@@ -460,7 +460,7 @@ const ArticleDetails: React.FC = () => {
                         <img
                           src={editedParagraph.image.fullUrl}
                           alt="Paragraph Image Preview"
-                          className="w-full h-full object-cover  w-[300px]"
+                          className=" h-full object-cover  w-[300px]"
                         />
                       ) : (
                         <div className="flex flex-col items-center justify-center h-full   w-[300px] p-4 text-gray-400">
