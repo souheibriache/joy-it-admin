@@ -2,7 +2,6 @@ import {
   BookOpenText,
   Building2,
   CircleUser,
-  Contact,
   Gamepad2,
   LayoutDashboard,
   LogOut,
