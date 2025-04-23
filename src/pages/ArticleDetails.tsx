@@ -212,7 +212,7 @@ const ArticleDetails: React.FC = () => {
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
-        setEditedParagraph((prev) => ({
+        setEditedParagraph((prev: any) => ({
           ...prev!,
           image: {
             file,
