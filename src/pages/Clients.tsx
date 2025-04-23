@@ -1,13 +1,17 @@
 import { CompaniesTable } from "@/components/CompaniesTable";
 import PageTitle from "@/components/PageTitle";
+import { Card, CardContent } from "@/components/ui/card";
 
-type Props = {};
-
-const Clients = ({}: Props) => {
+const Clients = () => {
   return (
-    <div className="flex flex-col gap-10">
+    <div className="space-y-6">
       <PageTitle title="Clients" />
-      <CompaniesTable />
+
+      <Card>
+        <CardContent className="p-6">
+          <CompaniesTable />
+        </CardContent>
+      </Card>
     </div>
   );
 };

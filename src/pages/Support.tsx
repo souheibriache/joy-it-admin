@@ -1,7 +1,10 @@
+"use client";
+
 import PageTitle from "@/components/PageTitle";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import {
-  ColumnDef,
+  type ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -17,16 +20,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Eye } from "lucide-react";
-import { ISupport, useGetAllSupportQuestions } from "@/utils/api/support-api";
+import {
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  Filter,
+  Loader2,
+} from "lucide-react";
+import {
+  type ISupport,
+  useGetAllSupportQuestions,
+} from "@/utils/api/support-api";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
-type Props = {};
-
-const Support = ({}: Props) => {
+const Support = () => {
   return (
-    <div className="p-6 flex flex-col gap-5">
+    <div className="space-y-6">
       <PageTitle title="Support" />
-      <SupportTable />
+
+      <Card>
+        <CardContent className="p-6">
+          <SupportTable />
+        </CardContent>
+      </Card>
     </div>
   );
 };
@@ -39,31 +57,37 @@ export const SupportTable: React.FC = () => {
   const navigate = useNavigate();
 
   // Extract pagination and filter values from URL search parameters
-  const currentPage = parseInt(searchParams.get("page") || "1", 10);
-  const pageSize = parseInt(searchParams.get("take") || "10", 10);
-  //   const [filters, setFilters] = useState({});
+  const currentPage = Number.parseInt(searchParams.get("page") || "1", 10);
+  const pageSize = Number.parseInt(searchParams.get("take") || "10", 10);
 
   // Fetch support questions using a custom hook
   const { supports, isLoading } = useGetAllSupportQuestions({
     page: currentPage,
     take: pageSize,
-    // query: filters || {},
   });
 
   const columns: ColumnDef<ISupport>[] = [
     {
       accessorKey: "id",
       header: "ID",
-      cell: ({ row }) => row.original.id.slice(0, 8),
+      cell: ({ row }) => (
+        <span className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+          {row.original.id.slice(0, 8)}
+        </span>
+      ),
     },
     {
       // Display the full name based on askedBy if present
       header: "Nom",
       cell: ({ row }) => {
         const support = row.original;
-        return support.askedBy
-          ? `${support.askedBy.firstName} ${support.askedBy.lastName}`
-          : `${support.firstName} ${support.lastName}`;
+        return (
+          <div className="font-medium">
+            {support.askedBy
+              ? `${support.askedBy.firstName} ${support.askedBy.lastName}`
+              : `${support.firstName} ${support.lastName}`}
+          </div>
+        );
       },
     },
     {
@@ -71,9 +95,13 @@ export const SupportTable: React.FC = () => {
       header: "Email",
       cell: ({ row }) => {
         const support = row.original;
-        return support.askedBy && support.askedBy.email
-          ? support.askedBy.email
-          : support.email;
+        return (
+          <div className="text-sm truncate max-w-[200px]">
+            {support.askedBy && support.askedBy.email
+              ? support.askedBy.email
+              : support.email}
+          </div>
+        );
       },
     },
     {
@@ -82,19 +110,39 @@ export const SupportTable: React.FC = () => {
       header: "Sujet",
       cell: ({ row }) => {
         const subject = row.original.subject || "";
-        return subject.length > 20 ? subject.substring(0, 20) + "..." : subject;
+        return (
+          <div className="font-medium">
+            {subject.length > 30 ? subject.substring(0, 30) + "..." : subject}
+          </div>
+        );
       },
     },
     {
       accessorKey: "category",
       header: "Catégorie",
+      cell: ({ row }) => (
+        <Badge variant="outline" className="capitalize">
+          {row.original.category}
+        </Badge>
+      ),
     },
     {
       accessorKey: "seenAt",
       header: "Vu le",
       cell: ({ row }) => {
         const seenAt = row.original.seenAt;
-        return seenAt ? new Date(seenAt).toLocaleDateString("fr-FR") : "Non vu";
+        return seenAt ? (
+          <div className="text-sm">
+            {new Date(seenAt).toLocaleDateString("fr-FR")}
+          </div>
+        ) : (
+          <Badge
+            variant="outline"
+            className="bg-amber-100 text-amber-800 border-amber-200"
+          >
+            Non vu
+          </Badge>
+        );
       },
     },
     {
@@ -102,32 +150,42 @@ export const SupportTable: React.FC = () => {
       header: "Répondu",
       cell: ({ row }) =>
         row.original.answeredAt ? (
-          <span className="px-2 py-1 rounded bg-green-500 text-white text-sm">
-            OUI
-          </span>
+          <Badge className="bg-green-500 hover:bg-green-600">Répondu</Badge>
         ) : (
-          <span className="px-2 py-1 rounded bg-red-500 text-white text-sm">
-            NON
-          </span>
+          <Badge variant="destructive">En attente</Badge>
         ),
     },
     {
       accessorKey: "questionAttachments",
       header: "Pièces jointes",
-      cell: ({ row }) =>
-        row.original.questionAttachments
-          ? row.original.questionAttachments.length
-          : 0,
+      cell: ({ row }) => (
+        <div className="text-center">
+          {row.original.questionAttachments &&
+          row.original.questionAttachments.length > 0 ? (
+            <Badge
+              variant="outline"
+              className="bg-blue-100 text-blue-800 border-blue-200"
+            >
+              {row.original.questionAttachments.length}
+            </Badge>
+          ) : (
+            <span className="text-gray-400">0</span>
+          )}
+        </div>
+      ),
     },
     {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <Button onClick={() => navigate(`/support/${row.original.id}`)}>
-            <Eye className="w-4 h-4" />
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 w-8 p-0 text-purple"
+          onClick={() => navigate(`/support/${row.original.id}`)}
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
       ),
     },
   ];
@@ -150,51 +208,35 @@ export const SupportTable: React.FC = () => {
     });
   };
 
-  //   const handleApplyFilters = (newFilters: Record<string, any>) => {
-  //     const cleanedFilters = Object.fromEntries(
-  //       Object.entries(newFilters).filter(
-  //         ([, value]) => value !== undefined && value !== ""
-  //       )
-  //     );
-  //     setFilters(cleanedFilters);
-  //     setSearchParams((prevParams) => {
-  //       const params = new URLSearchParams(prevParams.toString());
-  //       Object.entries(cleanedFilters).forEach(([key, value]) =>
-  //         params.set(key, value.toString())
-  //       );
-  //       return params;
-  //     });
-  //   };
-
-  //   const handleClearFilters = () => {
-  //     setFilters({});
-  //     setSearchParams({ page: "1", take: pageSize.toString() });
-  //   };
-
   return (
-    <div className="w-full flex flex-col gap-5">
-      <div className="flex justify-between items-center">
-        <Button onClick={() => setShowFilters(!showFilters)}>
-          {showFilters ? "Fermer" : "Filtres"}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Button
+          variant="outline"
+          onClick={() => setShowFilters(!showFilters)}
+          className="flex items-center gap-2"
+        >
+          <Filter className="h-4 w-4" />
+          {showFilters ? "Masquer les filtres" : "Afficher les filtres"}
         </Button>
       </div>
-      <div>
-        Filters a implementer
-        {/* {showFilters && (
-          <SupportFilter
-            onApplyFilters={handleApplyFilters}
-            onClearFilters={handleClearFilters}
-            filters={filters}
-          />
-        )} */}
-      </div>
+
+      {showFilters && (
+        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <p className="text-sm text-gray-500">Filtres à implémenter</p>
+        </div>
+      )}
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                key={headerGroup.id}
+                className="bg-gray-50 hover:bg-gray-50"
+              >
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="font-semibold">
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext()
@@ -207,7 +249,7 @@ export const SupportTable: React.FC = () => {
           <TableBody>
             {!isLoading && table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} className="hover:bg-gray-50">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -224,30 +266,60 @@ export const SupportTable: React.FC = () => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  {isLoading ? "Chargement..." : "Aucun résultat trouvé."}
+                  {isLoading ? (
+                    <div className="flex justify-center items-center">
+                      <Loader2 className="h-6 w-6 text-purple animate-spin mr-2" />
+                      Chargement des demandes de support...
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-gray-500 py-8">
+                      <AlertCircle className="h-10 w-10 text-gray-400 mb-2" />
+                      <p className="text-lg font-medium">
+                        Aucune demande de support trouvée
+                      </p>
+                      <p className="text-sm">Essayez de modifier vos filtres</p>
+                    </div>
+                  )}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Précédent
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage >= (supports?.meta?.totalPages || 1)}
-        >
-          Suivant
-        </Button>
+
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-gray-500">
+          {supports?.meta?.totalItems ? (
+            <span>
+              Affichage de {(currentPage - 1) * pageSize + 1} à{" "}
+              {Math.min(currentPage * pageSize, supports.meta.totalItems)} sur{" "}
+              {supports.meta.totalItems} demandes
+            </span>
+          ) : (
+            <span>0 demande</span>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="flex items-center gap-1"
+          >
+            <ChevronLeft className="h-4 w-4" /> Précédent
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage >= (supports?.meta?.totalPages || 1)}
+            className="flex items-center gap-1"
+          >
+            Suivant <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+"use client";
+
+import type React from "react";
+import { useState } from "react";
 import {
-  ColumnDef,
+  type ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button"; // Replace with your actual button component
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -15,11 +18,26 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"; // Replace with your actual table components
+} from "@/components/ui/table";
 import { useGetPaginatedCompanies } from "@/utils/api/companies-api";
-import { CompanyFilterDto, ICompany } from "@/types/company";
-import { Eye } from "lucide-react";
+import type { CompanyFilterDto, ICompany } from "@/types/company";
+import {
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  Filter,
+  Loader2,
+} from "lucide-react";
 import { CompanyFilter } from "./CompanyFilters";
+import { Badge } from "./ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 export const CompaniesTable: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -28,8 +46,8 @@ export const CompaniesTable: React.FC = () => {
   const navigate = useNavigate();
 
   // Extracting query params
-  const currentPage = parseInt(searchParams.get("page") || "1", 10);
-  const pageSize = parseInt(searchParams.get("take") || "10", 10);
+  const currentPage = Number.parseInt(searchParams.get("page") || "1", 10);
+  const pageSize = Number.parseInt(searchParams.get("take") || "10", 10);
   const [filters, setFilters] = useState<CompanyFilterDto>({});
 
   // Fetching data from the hook
@@ -43,75 +61,101 @@ export const CompaniesTable: React.FC = () => {
     {
       accessorKey: "id",
       header: "Id",
-      cell: ({ row }: { row: any }) => row.original.id.split("-")[0],
+      cell: ({ row }: { row: any }) => (
+        <span className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+          {row.original.id.split("-")[0]}
+        </span>
+      ),
     },
     {
       accessorKey: "name",
       header: "Nom",
+      cell: ({ row }: { row: any }) => (
+        <div className="font-medium">{row.original.name}</div>
+      ),
     },
     {
       accessorKey: "logo.fullUrl",
       header: "Logo",
-      cell: ({ row }: { row: any }) => (
-        <img
-          src={row.original.logo?.fullUrl || ""}
-          alt={row.original.name}
-          className="h-10 w-10 rounded"
-        />
-      ),
+      cell: ({ row }: { row: any }) =>
+        row.original.logo?.fullUrl ? (
+          <img
+            src={row.original.logo?.fullUrl || "/placeholder.svg"}
+            alt={row.original.name}
+            className="h-10 w-10 rounded-full object-cover border border-gray-200"
+          />
+        ) : (
+          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-medium">
+            {row.original.name.charAt(0)}
+          </div>
+        ),
     },
     {
       accessorKey: "city",
       header: "Ville",
+      cell: ({ row }: { row: any }) => <div>{row.original.city || "—"}</div>,
     },
     {
       accessorKey: "employeesNumber",
       header: "Taille",
-      cell: ({ row }: { row: any }) => row.original.employeesNumber,
+      cell: ({ row }: { row: any }) => (
+        <Badge variant="outline" className="bg-gray-100">
+          {row.original.employeesNumber} employés
+        </Badge>
+      ),
     },
     {
       accessorKey: "credit",
-      header: "Credit",
-      cell: ({ row }: { row: any }) => row.original.credit,
+      header: "Crédits",
+      cell: ({ row }: { row: any }) => (
+        <div className="font-medium text-center">{row.original.credit}</div>
+      ),
     },
     {
       accessorKey: "client.email",
       header: "Email",
-      cell: ({ row }: { row: any }) => row.original.client?.email || "N/A",
+      cell: ({ row }: { row: any }) => (
+        <div className="text-sm truncate max-w-[200px]">
+          {row.original.client?.email || "—"}
+        </div>
+      ),
     },
     {
       accessorKey: "subscription.plan.name",
       header: "Abonnement",
       cell: ({ row }: { row: any }) =>
-        row.original.subscription?.plan?.name || "N/A",
-    },
-
-    {
-      accessorKey: "isVerified",
-      header: "Verifié",
-      cell: ({ row }: { row: any }) =>
-        row.original.isVerified ? (
-          <span className="p-2 rounded bg-green-500 text-white font-semibold text-sm">
-            OUI
-          </span>
+        row.original.subscription?.plan?.name ? (
+          <Badge className="bg-purple/10 text-purple border-purple/20">
+            {row.original.subscription?.plan?.name}
+          </Badge>
         ) : (
-          <span className="p-2 rounded bg-red-500 text-white font-semibold text-sm">
-            NON
-          </span>
+          <Badge variant="outline" className="text-gray-500">
+            Aucun
+          </Badge>
         ),
     },
     {
-      accessorKey: "subscription.plan.name",
+      accessorKey: "isVerified",
+      header: "Vérifié",
+      cell: ({ row }: { row: any }) =>
+        row.original.isVerified ? (
+          <Badge className="bg-green-500 hover:bg-green-600">Vérifié</Badge>
+        ) : (
+          <Badge variant="destructive">Non vérifié</Badge>
+        ),
+    },
+    {
+      accessorKey: "actions",
       header: "Actions",
       cell: ({ row }: { row: any }) => (
-        <div className="flex flex-row items-center gap-2">
-          <button
-            className="bg-purple text-white  p-1 rounded"
-            onClick={() => navigate("/clients/" + row?.original.id)}
-          >
-            <Eye className="p-0.5" />
-          </button>
-        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 w-8 p-0 text-purple"
+          onClick={() => navigate("/clients/" + row?.original.id)}
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
       ),
     },
   ];
@@ -157,26 +201,46 @@ export const CompaniesTable: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-5">
-      <div className="flex justify-between items-center">
-        <Button onClick={() => setShowFilters(!showFilters)}>
-          {showFilters ? "Fermer" : "Filtres"}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Button
+          variant="outline"
+          onClick={() => setShowFilters(!showFilters)}
+          className="flex items-center gap-2"
+        >
+          <Filter className="h-4 w-4" />
+          {showFilters ? "Masquer les filtres" : "Afficher les filtres"}
         </Button>
       </div>
+
       {showFilters && (
-        <CompanyFilter
-          onApplyFilters={handleApplyFilters}
-          onClearFilters={handleClearFilters}
-          filters={filters}
-        />
+        <Card className="border border-gray-200 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Filtres</CardTitle>
+            <CardDescription>
+              Filtrer les clients selon vos critères
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CompanyFilter
+              onApplyFilters={handleApplyFilters}
+              onClearFilters={handleClearFilters}
+              filters={filters}
+            />
+          </CardContent>
+        </Card>
       )}
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow
+                key={headerGroup.id}
+                className="bg-gray-50 hover:bg-gray-50"
+              >
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="font-semibold">
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext()
@@ -189,7 +253,7 @@ export const CompaniesTable: React.FC = () => {
           <TableBody>
             {!isLoading && table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} className="hover:bg-gray-50">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -206,30 +270,58 @@ export const CompaniesTable: React.FC = () => {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  {isLoading ? "Loading..." : "No results found."}
+                  {isLoading ? (
+                    <div className="flex justify-center items-center">
+                      <Loader2 className="h-6 w-6 text-purple animate-spin mr-2" />
+                      Chargement des clients...
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-gray-500 py-8">
+                      <AlertCircle className="h-10 w-10 text-gray-400 mb-2" />
+                      <p className="text-lg font-medium">Aucun client trouvé</p>
+                      <p className="text-sm">Essayez de modifier vos filtres</p>
+                    </div>
+                  )}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Précédent
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage >= (companies?.meta?.totalPages || 1)}
-        >
-          Suivant
-        </Button>
+
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-gray-500">
+          {companies?.meta?.totalItems ? (
+            <span>
+              Affichage de {(currentPage - 1) * pageSize + 1} à{" "}
+              {Math.min(currentPage * pageSize, companies.meta.totalItems)} sur{" "}
+              {companies.meta.totalItems} clients
+            </span>
+          ) : (
+            <span>0 client</span>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="flex items-center gap-1"
+          >
+            <ChevronLeft className="h-4 w-4" /> Précédent
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage >= (companies?.meta?.totalPages || 1)}
+            className="flex items-center gap-1"
+          >
+            Suivant <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );

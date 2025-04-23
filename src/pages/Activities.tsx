@@ -1,13 +1,17 @@
 import ActivitiesTable from "@/components/ActivitiesTable";
 import PageTitle from "@/components/PageTitle";
+import { Card, CardContent } from "@/components/ui/card";
 
-type Props = {};
-
-const Activities = ({}: Props) => {
+const Activities = () => {
   return (
-    <div className="flex flex-col gap-10">
-      <PageTitle title="Activities" />
-      <ActivitiesTable />
+    <div className="space-y-6">
+      <PageTitle title="Activités" />
+
+      <Card>
+        <CardContent className="p-6">
+          <ActivitiesTable />
+        </CardContent>
+      </Card>
     </div>
   );
 };

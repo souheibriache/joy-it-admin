@@ -1,5 +1,13 @@
-import { CompanyFilterDto } from "@/types/company";
-import React, { useState } from "react";
+"use client";
+
+import type { CompanyFilterDto } from "@/types/company";
+import type React from "react";
+import { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { Search, X } from "lucide-react";
 
 export interface CompanyFilters {
   name?: string;
@@ -18,65 +26,104 @@ export const CompanyFilter: React.FC<CompanyFilterProps> = ({
   filters,
 }) => {
   const [name, setName] = useState("");
-  const [isVerified, setIsVerified] = useState<boolean | undefined>();
+  const [verificationStatus, setVerificationStatus] = useState<
+    string | undefined
+  >(undefined);
+
+  // Initialize form with existing filters
+  useEffect(() => {
+    if (filters) {
+      setName(filters.name || "");
+      if (filters.isVerified !== undefined) {
+        setVerificationStatus(filters.isVerified ? "verified" : "unverified");
+      } else {
+        setVerificationStatus(undefined);
+      }
+    }
+  }, [filters]);
 
   const handleApplyFilters = () => {
+    const isVerified =
+      verificationStatus === "verified"
+        ? true
+        : verificationStatus === "unverified"
+        ? false
+        : undefined;
+
     onApplyFilters({ name, isVerified });
   };
 
   const handleClearFilters = () => {
     setName("");
-    setIsVerified(undefined);
+    setVerificationStatus(undefined);
     onClearFilters();
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-4 mb-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Name Filter */}
-      <input
-        type="text"
-        placeholder="Nom de l'entreprise"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="border border-gray-300 rounded-md px-4 py-2 w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-
-      {/* Verified Checkbox */}
-      <div className="flex items-center space-x-4">
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={isVerified === true}
-            onChange={() => setIsVerified(true)}
-            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+      <div className="space-y-2">
+        <Label htmlFor="name">Nom de l'entreprise</Label>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            id="name"
+            type="text"
+            placeholder="Rechercher par nom"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="pl-10"
           />
-          <span>Verifié</span>
-        </label>
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            checked={isVerified === false}
-            onChange={() => setIsVerified(false)}
-            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-          />
-          <span>Non verifié</span>
-        </label>
+        </div>
       </div>
 
-      {/* Buttons */}
-      <button
-        disabled={filters === null}
-        onClick={handleApplyFilters}
-        className="bg-blue-600 text-white px-4 py-2 disabled:opacity-80 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
-        Appliquer
-      </button>
-      <button
-        onClick={handleClearFilters}
-        className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
-      >
-        Clearer
-      </button>
+      {/* Verification Status */}
+      <div className="space-y-2">
+        <Label>Statut de vérification</Label>
+        <RadioGroup
+          value={verificationStatus}
+          onValueChange={setVerificationStatus}
+          className="flex flex-col space-y-2"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="all" id="all" />
+            <Label htmlFor="all" className="font-normal cursor-pointer">
+              Tous
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="verified" id="verified" />
+            <Label htmlFor="verified" className="font-normal cursor-pointer">
+              Vérifié
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="unverified" id="unverified" />
+            <Label htmlFor="unverified" className="font-normal cursor-pointer">
+              Non vérifié
+            </Label>
+          </div>
+        </RadioGroup>
+      </div>
+
+      {/* Actions */}
+      <div className="col-span-full flex items-center justify-end space-x-4 mt-4">
+        <Button
+          variant="outline"
+          onClick={handleClearFilters}
+          className="flex items-center"
+          type="button"
+        >
+          <X className="mr-2 h-4 w-4" /> Réinitialiser
+        </Button>
+        <Button
+          onClick={handleApplyFilters}
+          className="bg-purple hover:bg-secondarypurple"
+          type="button"
+        >
+          Appliquer les filtres
+        </Button>
+      </div>
     </div>
   );
 };

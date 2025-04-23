@@ -1,35 +1,44 @@
+"use client";
+
 import { resetAuth } from "@/redux/auth/auth-slice";
 import { resetUser } from "@/redux/auth/user-slice";
-import { ReactNode, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   id: string;
   text: string;
   icon: ReactNode;
+  isOpen: boolean;
+  isActive: boolean;
+  isLogout?: boolean;
 };
 
-const SideBarItem = ({ id, text, icon }: Props) => {
-  const [currentTab, setCurrentTab] = useState("dashboard");
+const SideBarItem = ({
+  id,
+  text,
+  icon,
+  isOpen,
+  isActive,
+  isLogout = false,
+}: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  useEffect(() => {
-    const currentTab = location.pathname.split("/")[1] || "dashboard";
-    setCurrentTab(currentTab);
-  }, [location]);
 
   const handleSideBarItemClick = () => {
     if (id === "logout") {
       dispatch(resetAuth());
       dispatch(resetUser());
       window.location.pathname = "/login";
+      return;
     }
+
     if (id === "dashboard") {
       navigate("/");
       return;
     }
+
     navigate(id);
   };
 
@@ -37,16 +46,18 @@ const SideBarItem = ({ id, text, icon }: Props) => {
     <div
       id={id}
       onClick={handleSideBarItemClick}
-      className={`flex select-none flex-row items-center gap-[15px] w-full overflow-hidden pl-[15px] py-3 rounded duration-200 hover:bg-opacity-10 cursor-pointer ${
-        id === "logout" ? "mt-auto" : ""
-      } ${
-        currentTab === id
-          ? "bg-secondarypurple text-white hover:bg-opacity-90"
-          : "hover:bg-purple bg-opacity-10"
-      }`}
+      className={`
+        flex items-center gap-3 px-4 py-3 mx-2 my-1 rounded-md cursor-pointer transition-all
+        ${
+          isActive
+            ? "bg-white/20 text-white"
+            : "text-white/80 hover:bg-white/10"
+        }
+        ${isLogout ? "mt-auto text-red-200 hover:text-red-100" : ""}
+      `}
     >
-      {icon}
-      <p className="font-semibold">{text}</p>
+      <div className="flex-shrink-0">{icon}</div>
+      {isOpen && <span className="font-medium truncate">{text}</span>}
     </div>
   );
 };
