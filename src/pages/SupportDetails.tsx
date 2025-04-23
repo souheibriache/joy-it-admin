@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   useGetSupportById,
@@ -8,7 +8,7 @@ import {
 } from "@/utils/api/support-api";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { File, FileText, Loader, Upload } from "lucide-react";
+import { FileText, Loader } from "lucide-react";
 import SupportAttachments from "@/components/SupportAttachments";
 
 const SupportDetails: React.FC = () => {

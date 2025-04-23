@@ -19,7 +19,7 @@ const Settings: React.FC = () => {
   const { pricing: fetchedPricing, isLoading } = useGetPricing();
   const { mutate: updatePricing } = useUpdatePricing();
 
-  const { data: faqs, isLoading: faqIsLoading } = useGetFaqs();
+  const { data: faqs } = useGetFaqs();
   const createFaqMutation = useCreateFaq();
   const updateFaqMutation = useUpdateFaq();
   const deleteFaqMutation = useDeleteFaq();

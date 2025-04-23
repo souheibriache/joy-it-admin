@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import PageTitle from "@/components/PageTitle";
 import { useGetAnalytics } from "@/utils/api/analytics-api";
 import {

@@ -72,13 +72,6 @@ const CreateArticle: React.FC = () => {
     setNewParagraph({ title: "", subtitle: "", content: "" });
   };
 
-  // Handle changes for the new paragraph form
-  const handleNewParagraphChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setNewParagraph({ ...newParagraph, [e.target.name]: e.target.value });
-  };
-
   // Handle file selection for a paragraph image (by paragraph index)
   const handleParagraphImageChange = (
     index: number,

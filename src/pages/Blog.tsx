@@ -2,9 +2,7 @@ import PageTitle from "@/components/PageTitle";
 import { Button } from "@/components/ui/button";
 import { useDeleteArticle, useGetArticles } from "@/utils/api/blog-api";
 import { Loader, Plus } from "lucide-react";
-import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 // Helper to truncate text
 const truncate = (text: string, limit: number) =>

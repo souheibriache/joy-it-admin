@@ -22,7 +22,7 @@ import { ISupport, useGetAllSupportQuestions } from "@/utils/api/support-api";
 
 type Props = {};
 
-const Support = (props: Props) => {
+const Support = ({}: Props) => {
   return (
     <div className="p-6 flex flex-col gap-5">
       <PageTitle title="Support" />
