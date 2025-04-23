@@ -162,10 +162,6 @@ const ActivityDetails: React.FC = () => {
     uploadFormData.append("isInsideCompany", formData.isInsideCompany);
     uploadFormData.append("type", formData.type);
 
-    for (let [key, value] of uploadFormData.entries()) {
-      console.log(key, value);
-    }
-
     formData.keyWords?.forEach((word: string, index: number) => {
       uploadFormData.append(`keyWords[${index}]`, word);
     });
@@ -402,7 +398,6 @@ const ActivityDetails: React.FC = () => {
                 value={formData.type}
                 onValueChange={(e: string) => {
                   setFormData((formData: any) => ({ ...formData, type: e }));
-                  console.log({ e, formData });
                 }}
               >
                 <SelectTrigger className="w-[180px]">

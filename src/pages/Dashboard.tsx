@@ -13,13 +13,9 @@ import {
 const Dashboard = () => {
   const { analytics, isLoading } = useGetAnalytics();
 
-  useEffect(() => {
-    console.log({ analytics });
-  }, [analytics]);
-
   if (isLoading) {
     return (
-      <div>
+      <div className="flex flex-col gap-5 p-6">
         <PageTitle title="Tableau de bord" />
         <Loader2 className="text-purple animate-spin" />
       </div>
@@ -42,30 +38,30 @@ const Dashboard = () => {
   } = analytics!;
 
   return (
-    <div className="p-6">
+    <div className="flex flex-col gap-5 p-6">
       <PageTitle title="Tableau de bord" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Companies */}
+        {/* Entreprises */}
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg p-4 rounded-md">
           <div className="flex items-center">
             <Building2 className="w-8 h-8 mr-3" />
-            <h3 className="text-lg font-semibold">Companies</h3>
+            <h3 className="text-lg font-semibold">Entreprises</h3>
           </div>
-          <p className="mt-2">Total: {totalCompanies}</p>
-          <p>Verified: {verifiedCompanies}</p>
-          <p>Unverified: {unverifiedCompanies}</p>
+          <p className="mt-2">Total : {totalCompanies}</p>
+          <p>Vérifiées : {verifiedCompanies}</p>
+          <p>Non vérifiées : {unverifiedCompanies}</p>
         </div>
 
-        {/* Plans */}
+        {/* Formules */}
         <div className="bg-gradient-to-r from-secondarypurple to-purple text-white shadow-lg p-4 rounded-md">
           <div className="flex items-center">
             <ClipboardList className="w-8 h-8 mr-3" />
-            <h3 className="text-lg font-semibold">Plans</h3>
+            <h3 className="text-lg font-semibold">Formules</h3>
           </div>
-          <p className="mt-2">Total Plans: {totalPlans}</p>
+          <p className="mt-2">Total des Formules : {totalPlans}</p>
           <h4 className="text-sm mt-2 font-semibold">
-            Subscriptions Per Plan:
+            Abonnements par Formule :
           </h4>
           {subscriptionsPerPlan &&
           Object.keys(subscriptionsPerPlan).length > 0 ? (
@@ -74,52 +70,54 @@ const Dashboard = () => {
                 subscriptionsPerPlan as Record<string, number>
               ).map(([plan, count]) => (
                 <li key={plan}>
-                  {plan}: {count}
+                  {plan} : {count}
                 </li>
               ))}
             </ul>
           ) : (
-            <p>No subscriptions available.</p>
+            <p>Aucun abonnement disponible.</p>
           )}
         </div>
 
-        {/* Subscriptions */}
+        {/* Abonnements */}
         <div className="bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg p-4 rounded-md">
           <div className="flex items-center">
             <ClipboardList className="w-8 h-8 mr-3" />
-            <h3 className="text-lg font-semibold">Subscriptions</h3>
+            <h3 className="text-lg font-semibold">Abonnements</h3>
           </div>
-          <p className="mt-2">Total Subscriptions: {totalSubscriptions}</p>
+          <p className="mt-2">Total des Abonnements : {totalSubscriptions}</p>
         </div>
 
-        {/* Schedules */}
+        {/* Plannings */}
         <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg p-4 rounded-md">
           <div className="flex items-center">
             <Calendar className="w-8 h-8 mr-3" />
-            <h3 className="text-lg font-semibold">Schedules</h3>
+            <h3 className="text-lg font-semibold">Plannings</h3>
           </div>
-          <p className="mt-2">Total Schedules: {totalSchedules}</p>
-          <p>Completed: {completedSchedules}</p>
-          <p>Pending: {pendingSchedules}</p>
-          <p>Canceled: {canceledSchedules}</p>
+          <p className="mt-2">Total des Plannings : {totalSchedules}</p>
+          <p>Terminés : {completedSchedules}</p>
+          <p>En attente : {pendingSchedules}</p>
+          <p>Annulés : {canceledSchedules}</p>
         </div>
 
-        {/* Activities */}
+        {/* Activités */}
         <div className="bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg p-4 rounded-md">
           <div className="flex items-center">
             <Activity className="w-8 h-8 mr-3" />
-            <h3 className="text-lg font-semibold">Activities</h3>
+            <h3 className="text-lg font-semibold">Activités</h3>
           </div>
-          <p className="mt-2">Total Activities: {totalActivities}</p>
+          <p className="mt-2">Total des Activités : {totalActivities}</p>
         </div>
 
-        {/* Credits */}
+        {/* Crédits */}
         <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-lg p-4 rounded-md">
           <div className="flex items-center">
             <CreditCard className="w-8 h-8 mr-3" />
-            <h3 className="text-lg font-semibold">Credits</h3>
+            <h3 className="text-lg font-semibold">Crédits</h3>
           </div>
-          <p className="mt-2">Total Credits Consumed: {totalCreditsConsumed}</p>
+          <p className="mt-2">
+            Total des Crédits consommés : {totalCreditsConsumed}
+          </p>
         </div>
       </div>
     </div>

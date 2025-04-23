@@ -39,10 +39,6 @@ export const CompaniesTable: React.FC = () => {
     query: filters || {},
   });
 
-  useEffect(() => {
-    console.log({ filters });
-  }, [filters]);
-
   const columns: ColumnDef<ICompany>[] = [
     {
       accessorKey: "id",

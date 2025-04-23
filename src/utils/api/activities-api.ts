@@ -54,7 +54,6 @@ export const useCreateActivity = () => {
   const queryClient = useQueryClient();
 
   const createActivityRequest = async (data: FormData) => {
-    console.log({ data });
     return await fetchWithAuth(`/activities`, { method: "POST", body: data });
   };
 

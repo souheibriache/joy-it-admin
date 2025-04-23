@@ -8,9 +8,13 @@ import ActivityDetails from "./pages/ActivityDetails";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import ClientDetails from "./pages/ClientDetails";
-import Plans from "./pages/Plans";
-import PlanDetails from "./pages/PlanDetails";
 import Account from "./pages/Account";
+import Settings from "./pages/Settings";
+import Blog from "./pages/Blog";
+import ArticleDetails from "./pages/ArticleDetails";
+import CreateArticle from "./pages/CreateArticle";
+import Support from "./pages/Support";
+import SupportDetails from "./pages/SupportDetails";
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
@@ -40,8 +44,12 @@ const App = () => {
           <Route path="clients/:companyId" element={<ClientDetails />} />
           <Route path="activities" element={<Activities />} />
           <Route path="activities/:activityId" element={<ActivityDetails />} />
-          <Route path="plans" element={<Plans />} />
-          <Route path="plans/:planId" element={<PlanDetails />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="blog" element={<Blog />} />
+          <Route path="blog/:articleId" element={<ArticleDetails />} />
+          <Route path="blog/create-new" element={<CreateArticle />} />
+          <Route path="support" element={<Support />} />
+          <Route path="support/:supportId" element={<SupportDetails />} />
           <Route path="account" element={<Account />} />
         </Route>
       </Route>

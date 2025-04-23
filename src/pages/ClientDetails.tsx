@@ -42,6 +42,7 @@ const ClientDetails: React.FC = () => {
         client,
         subscription,
         logo,
+        serviceOrders,
         ...rest
       } = formData as any;
 

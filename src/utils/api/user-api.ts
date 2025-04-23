@@ -79,7 +79,7 @@ export const fetchCurrentUser = () => async (dispatch: AppDispatch) => {
     dispatch(fetchUserSuccess(user));
   } catch (error) {
     dispatch(fetchUserFailure(error));
-    console.log({ error });
+    console.error({ error });
     toast.error("Échec de la récupération de l'utilisateur");
   }
 };

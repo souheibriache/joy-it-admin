@@ -1,11 +1,14 @@
 import {
+  BookOpenText,
   Building2,
-  CalendarCheck,
   CircleUser,
+  Contact,
   Gamepad2,
   LayoutDashboard,
   LogOut,
   Menu,
+  MessageSquareMore,
+  Settings,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -30,9 +33,21 @@ const sidebarItems = [
   },
 
   {
-    id: "plans",
-    text: "Abonnements",
-    icon: <CalendarCheck className="min-h-[30px] min-w-[30px] " />,
+    id: "blog",
+    text: "Blog",
+    icon: <BookOpenText className="min-h-[30px] min-w-[30px] " />,
+  },
+
+  {
+    id: "Support",
+    text: "Support",
+    icon: <MessageSquareMore className="min-h-[30px] min-w-[30px] " />,
+  },
+
+  {
+    id: "settings",
+    text: "Parametres",
+    icon: <Settings className="min-h-[30px] min-w-[30px] " />,
   },
 
   {

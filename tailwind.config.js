@@ -17,8 +17,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
-        purple: "#684087",
-        secondarypurple: "#9163b5",
+        purple: "#13534B",
+        secondarypurple: "#A4C84F",
         joyitbg: "#F5F5F5",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

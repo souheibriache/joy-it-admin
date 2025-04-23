@@ -67,7 +67,7 @@ export const refreshAccessToken = async (refreshToken: string) => {
     const jsonData = await res.json();
     return jsonData;
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 
