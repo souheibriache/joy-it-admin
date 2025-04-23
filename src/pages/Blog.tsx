@@ -26,10 +26,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
-// Helper to truncate text
-const truncate = (text: string, limit: number) =>
-  text.length <= limit ? text : text.substring(0, limit) + "...";
-
 const Blog: React.FC = () => {
   const { data: articles, isLoading } = useGetArticles();
   const deleteArticleMutation = useDeleteArticle();
