@@ -54,7 +54,7 @@ export const CompaniesTable: React.FC = () => {
   const { companies, isLoading } = useGetPaginatedCompanies({
     page: currentPage,
     take: pageSize,
-    query: filters || {},
+    ...filters,
   });
 
   const columns: ColumnDef<ICompany>[] = [

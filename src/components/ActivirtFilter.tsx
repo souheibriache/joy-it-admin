@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Checkbox } from "./ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Search, X } from "lucide-react";
 
 interface ActivityFilterProps {
@@ -20,10 +21,10 @@ export const ActivityFilter: React.FC<ActivityFilterProps> = ({
 }) => {
   const [filters, setFilters] = useState<ActivityFilterDto>({
     search: "",
-    types: [],
-    durationMin: undefined,
-    durationMax: undefined,
-    isAvailable: undefined,
+    type: null,
+    durationMin: null,
+    durationMax: null,
+    isAvailable: null,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,14 +32,11 @@ export const ActivityFilter: React.FC<ActivityFilterProps> = ({
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCheckboxChange = (type: ActivityType) => {
-    setFilters((prev) => {
-      const types = prev.types || [];
-      const updatedTypes = types.includes(type)
-        ? types.filter((t) => t !== type)
-        : [...types, type];
-      return { ...prev, types: updatedTypes };
-    });
+  const handleTypeChange = (value: ActivityType) => {
+    setFilters((prev) => ({
+      ...prev,
+      type: value,
+    }));
   };
 
   const handleApplyFilters = () => {
@@ -48,10 +46,10 @@ export const ActivityFilter: React.FC<ActivityFilterProps> = ({
   const handleClearFilters = () => {
     setFilters({
       search: "",
-      types: [],
-      durationMin: undefined,
-      durationMax: undefined,
-      isAvailable: undefined,
+      type: null,
+      durationMin: null,
+      durationMax: null,
+      isAvailable: null,
     });
     onClearFilters();
   };
@@ -77,15 +75,15 @@ export const ActivityFilter: React.FC<ActivityFilterProps> = ({
 
       {/* Activity Types */}
       <div className="space-y-2">
-        <Label>Types d'activités</Label>
-        <div className="grid grid-cols-1 gap-2">
+        <Label>Type d'activité</Label>
+        <RadioGroup
+          value={filters.type || ""}
+          onValueChange={handleTypeChange}
+          className="grid grid-cols-1 gap-2"
+        >
           {Object.values(ActivityType).map((type) => (
             <div key={type} className="flex items-center space-x-2">
-              <Checkbox
-                id={`type-${type}`}
-                checked={filters.types?.includes(type) || false}
-                onCheckedChange={() => handleCheckboxChange(type)}
-              />
+              <RadioGroupItem value={type} id={`type-${type}`} />
               <Label
                 htmlFor={`type-${type}`}
                 className="text-sm font-normal cursor-pointer"
@@ -94,7 +92,7 @@ export const ActivityFilter: React.FC<ActivityFilterProps> = ({
               </Label>
             </div>
           ))}
-        </div>
+        </RadioGroup>
       </div>
 
       <div className="space-y-4">
@@ -130,7 +128,7 @@ export const ActivityFilter: React.FC<ActivityFilterProps> = ({
             onCheckedChange={(checked: boolean) =>
               setFilters((prev) => ({
                 ...prev,
-                isAvailable: checked === true ? true : undefined,
+                isAvailable: checked === true ? true : null,
               }))
             }
           />

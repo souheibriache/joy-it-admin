@@ -33,11 +33,11 @@ export type UpdateActivityMainImageDto = {
 };
 
 export type ActivityFilterDto = {
-  search?: string;
-  types?: ActivityType[];
-  durationMin?: number;
-  durationMax?: number;
-  isAvailable?: boolean;
+  search?: string | null;
+  type?: ActivityType | null;
+  durationMin?: number | null;
+  durationMax?: number | null;
+  isAvailable?: boolean | null;
 };
 
 export type ActivityOptionsDto = {

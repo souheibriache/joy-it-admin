@@ -51,7 +51,7 @@ const ActivitiesTable: React.FC = () => {
   const [pagination, setPagination] = useState<ActivityOptionsDto>({
     page: 1,
     take: 10,
-    query: filters,
+    ...filters,
   });
 
   const navigate = useNavigate();
@@ -106,19 +106,20 @@ const ActivitiesTable: React.FC = () => {
       ),
     },
     {
-      accessorKey: "types",
-      header: "Types",
+      accessorKey: "type",
+      header: "Type",
       cell: ({ row }) => (
         <div className="flex flex-wrap gap-1">
-          {row.original.types?.map((type: string) => (
+          {row.original.type ? (
             <Badge
-              key={type}
               variant="outline"
               className="bg-purple/10 text-purple text-xs"
             >
-              {type}
+              {row.original.type}
             </Badge>
-          )) || "—"}
+          ) : (
+            "—"
+          )}
         </div>
       ),
     },
@@ -186,12 +187,20 @@ const ActivitiesTable: React.FC = () => {
       )
     );
     setFilters(cleanedFilters);
-    setPagination((prev) => ({ ...prev, query: cleanedFilters, page: 1 }));
+    setPagination((prev) => ({ ...prev, ...cleanedFilters, page: 1 }));
   };
 
   const handleClearFilters = () => {
     setFilters({});
-    setPagination((prev) => ({ ...prev, query: {}, page: 1 }));
+    setPagination((prev) => ({
+      page: 1,
+      take: prev.take,
+      search: "",
+      type: null,
+      durationMin: null,
+      durationMax: null,
+      isAvailable: null,
+    }));
   };
 
   return (

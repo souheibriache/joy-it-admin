@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { toast } from "sonner";
 import fetchWithAuth from "@/utils/fetchWrapper";
-import {
+import type {
   ActivityOptionsDto,
   UpdateActivityDto,
   UpdateActivityMainImageDto,
@@ -31,8 +31,15 @@ export const useGetActivityById = (activityId: string) => {
 
 // Hook to fetch paginated activities
 export const useGetPaginatedActivities = (options: ActivityOptionsDto) => {
+  // Create a sanitized copy of options with proper number types
+  const sanitizedOptions = {
+    ...options,
+    page: Number(options.page),
+    take: Number(options.take),
+  };
+
   const getPaginatedActivitiesRequest = async () => {
-    const params = serializeQuery(options);
+    const params = serializeQuery(sanitizedOptions);
     return await fetchWithAuth(`/activities?${params}`, { method: "GET" });
   };
 
@@ -40,7 +47,7 @@ export const useGetPaginatedActivities = (options: ActivityOptionsDto) => {
     data: activities,
     isLoading,
     error,
-  } = useQuery(["activities", options], getPaginatedActivitiesRequest);
+  } = useQuery(["activities", sanitizedOptions], getPaginatedActivitiesRequest);
 
   if (error) {
     toast.error("Echéc de recuperation des activités");
@@ -133,6 +140,7 @@ export const useUpdateActivityMainImage = () => {
     },
   });
 };
+
 // Hook to delete an activity
 export const useDeleteActivity = () => {
   const queryClient = useQueryClient();

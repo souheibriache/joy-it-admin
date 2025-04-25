@@ -11,8 +11,8 @@ import {
 import { AppDispatch } from "@/redux/store";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = "https://api.joy-it.fr/api/v1";
-// const API_BASE_URL = "http://localhost:3000/api/v1";
+// const API_BASE_URL = "https://api.joy-it.fr/api/v1";
+const API_BASE_URL = "http://localhost:3000/api/v1";
 
 export type LoginUserRequest = {
   login: string;
